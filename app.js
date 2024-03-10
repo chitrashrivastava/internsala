@@ -1,15 +1,42 @@
 const express = require("express");
-require("dotenv").config({path:'./.env'})
+require("dotenv").config({ path: './.env' });
 const app = express();
+const { generatedErrors } = require("./midddlewares/error");
+// DB CONNECTION
+require("./models/database").connectDatabase();
 
-// logger
+// Logger - Morgan
 const logger = require("morgan");
 app.use(logger("tiny"));
 
-app.get("/",(req,res,next)=>{
-    res.json({message:"homepage"});
-})
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.listen(process.env.PORT)
+// Cookie parser
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
-console.log(`Server running on PORT ${process.env.PORT}`)
+// Session configuration
+app.use(session({
+    resave: true,
+    saveUninitialized: true, // or false, depending on your preference
+    secret: process.env.EXPRESS_SESSION_SECRET || 'your_secret_here' // you should set this secret in your .env file
+}));
+
+// Routes
+app.use("/", require("./routes/indexRouters"));
+
+// Error handling
+const errorHandler = require("./utils/errorHandler");
+
+app.all("*", (req, res, next) => {
+    next(new errorHandler(`Requested URL not found ${req.url}`, 404));
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on PORT ${PORT}`);
+});
