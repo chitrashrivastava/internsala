@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 // Cookie parser
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
 
 // Session configuration
 app.use(session({
@@ -24,6 +24,8 @@ app.use(session({
     saveUninitialized: true, // or false, depending on your preference
     secret: process.env.EXPRESS_SESSION_SECRET || 'your_secret_here' // you should set this secret in your .env file
 }));
+
+app.use(cookieParser()); //ye cokkies ko activate krta h (string code deta h hash form m)
 
 // Routes
 app.use("/", require("./routes/indexRouters"));

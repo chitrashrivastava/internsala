@@ -33,6 +33,8 @@ studentModel.methods.comparepassword = function(password){
   return bcrypt.compareSync(password,this.password);
 }
 
+
+// token generate krdege jav v user login and signup krega 
 studentModel.methods.getjwttoken = function() {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,

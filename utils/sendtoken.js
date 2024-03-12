@@ -4,9 +4,10 @@ exports.sendtoken = (student, statusCode, res) => {
         expires: new Date(
             Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
         ),
-        httpOnly: true,
-        secure: true
+        httpOnly: true, //local host true 
+        // secure: true = for https
     };
 
+    // token generate ho gya h 
     res.status(statusCode).cookie("token", token, options).json({ success: true, id: student._id, token });
 };
